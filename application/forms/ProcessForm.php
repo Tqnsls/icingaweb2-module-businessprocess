@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\Notification;
 use Icinga\Web\Session\SessionNamespace;
 use ipl\Sql\Connection as IcingaDbConnection;
+use ipl\Web\Url;
 
 class ProcessForm extends QuickForm
 {
@@ -109,6 +110,13 @@ class ProcessForm extends QuickForm
                 $this->getElement('url')->setValue($node->getInfoUrl());
             }
         }
+
+        $label = $this->translate('Delete');
+        $el = $this->createElement('submit', $label, array(
+            'data-base-target' => '_main'
+        ))->setLabel($label)->setDecorators(array('ViewHelper'));
+        $this->deleteButtonName = $el->getName();
+        $this->addElement($el);
     }
 
     /**
@@ -150,6 +158,32 @@ class ProcessForm extends QuickForm
     {
         $this->session = $session;
         return $this;
+    }
+
+    protected function onRequest()
+    {
+        $params = Url::fromRequest()->getParams();
+        if ($this->shouldBeDeleted()) {
+            $url = Url::fromRequest();
+
+            $url->setParams([
+                'config' => $params->get('config'),
+                'unlocked' => 1,
+                'action' => 'delete',
+                'deletenode' => $params->get('editnode')
+            ]);
+
+            $this->redirectAndExit($url);
+        }
+    }
+
+    protected function getNode(BpConfig $bp, $nodeName)
+    {
+        if ($nodeName) {
+            return $bp->getNode($nodeName);
+        } else {
+            return null;
+        }
     }
 
     public function onSuccess()
@@ -211,5 +245,20 @@ class ProcessForm extends QuickForm
         unset($changes);
 
         parent::onSuccess();
+    }
+
+    public function hasDeleteButton()
+    {
+        return $this->deleteButtonName !== null;
+    }
+
+    public function shouldBeDeleted()
+    {
+        if (! $this->hasDeleteButton()) {
+            return false;
+        }
+
+        $name = $this->deleteButtonName;
+        return $this->getSentValue($name) === $this->getElement($name)->getLabel();
     }
 }

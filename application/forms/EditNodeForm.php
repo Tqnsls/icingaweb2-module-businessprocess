@@ -12,6 +12,7 @@ use Icinga\Module\Businessprocess\Web\Form\Validator\NoDuplicateChildrenValidato
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\Session\SessionNamespace;
 use ipl\Sql\Connection as IcingaDbConnection;
+use ipl\Web\Url;
 
 class EditNodeForm extends QuickForm
 {
@@ -79,6 +80,13 @@ class EditNodeForm extends QuickForm
                 $this->setSubmitLabel($this->translate('Next'));
                 return;
         }
+
+        $label = $this->translate('Delete');
+        $el = $this->createElement('submit', $label, array(
+            'data-base-target' => '_main'
+        ))->setLabel($label)->setDecorators(array('ViewHelper'));
+        $this->deleteButtonName = $el->getName();
+        $this->addElement($el);
     }
 
     protected function isService()
@@ -402,6 +410,24 @@ class EditNodeForm extends QuickForm
         return $this->node;
     }
 
+    protected function onRequest()
+    {
+        $params = Url::fromRequest()->getParams();
+        if ($this->shouldBeDeleted()) {
+            $url = Url::fromRequest();
+
+            $url->setParams([
+                'config' => $params->get('config'),
+                'node' => $params->get('node'),
+                'unlocked' => 1,
+                'action' => 'delete',
+                'deletenode' => $params->get('editmonitorednode')
+            ]);
+
+            $this->redirectAndExit($url);
+        }
+    }
+
     public function onSuccess()
     {
         $changes = ProcessChanges::construct($this->bp, $this->session);
@@ -456,5 +482,20 @@ class EditNodeForm extends QuickForm
         }
 
         return parent::isValid($data);
+    }
+
+    public function hasDeleteButton()
+    {
+        return $this->deleteButtonName !== null;
+    }
+
+    public function shouldBeDeleted()
+    {
+        if (! $this->hasDeleteButton()) {
+            return false;
+        }
+
+        $name = $this->deleteButtonName;
+        return $this->getSentValue($name) === $this->getElement($name)->getLabel();
     }
 }
