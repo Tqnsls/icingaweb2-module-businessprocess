@@ -7,6 +7,7 @@ use Icinga\Module\Businessprocess\Renderer\TileRenderer\NodeTile;
 use Icinga\Module\Businessprocess\Web\Url;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class Breadcrumb extends BaseHtmlElement
 {
@@ -41,7 +42,11 @@ class Breadcrumb extends BaseHtmlElement
             )
         ));
         $breadcrumb->add(Html::tag('li')->add(
-            Html::tag('a', ['href' => $bpUrl], $bp->getTitle())
+            Html::tag(
+                'a',
+                ['href' => $bpUrl],
+                HtmlElement::create('span', ['class' => 'text', 'title' => $bp->getTitle()], $bp->getTitle())
+            )
         ));
         $path = $renderer->getCurrentPath();
 

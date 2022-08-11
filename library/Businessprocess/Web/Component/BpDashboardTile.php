@@ -25,7 +25,7 @@ class BpDashboardTile extends BaseHtmlElement
             ['class' => 'bp-link', 'data-base-target' => '_main'],
             Html::tag('a', $attributes, Html::tag('i', ['class' => 'icon icon-' . $icon]))
                 ->add(Html::tag('span', ['class' => 'header'], $title))
-                ->add($description)
+                ->add(Html::tag('span', ['class' => 'text', 'title' => $description], $description))
         ));
 
         $tiles = Html::tag('div', ['class' => 'bp-root-tiles']);

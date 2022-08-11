@@ -13,6 +13,7 @@ use Icinga\Module\Businessprocess\ServiceNode;
 use Icinga\Web\Url;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Web\Widget\StateBall;
 
 class NodeTile extends BaseHtmlElement
@@ -182,7 +183,11 @@ class NodeTile extends BaseHtmlElement
         if ($node instanceof MonitoredNode) {
             $link = Html::tag('a', ['href' => $url, 'data-base-target' => '_next'], $node->getAlias());
         } else {
-            $link = Html::tag('a', ['href' => $url], $node->getAlias());
+            $link = Html::tag(
+                'a',
+                ['href' => $url],
+                HtmlElement::create('span', ['class' => 'text', 'title' => $node->getAlias()], $node->getAlias())
+            );
         }
 
         return $link;

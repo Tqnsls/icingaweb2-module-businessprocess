@@ -9,7 +9,9 @@ use Icinga\Module\Businessprocess\State\IcingaDbState;
 use Icinga\Module\Businessprocess\State\MonitoringState;
 use Icinga\Module\Businessprocess\Storage\Storage;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class Dashboard extends BaseHtmlElement
 {
@@ -88,9 +90,16 @@ class Dashboard extends BaseHtmlElement
             $meta = $storage->loadMetadata($name);
             $title = $meta->get('Title');
             if ($title) {
-                $title = sprintf('%s (%s)', $title, $name);
+                $title = FormattedString::create(
+                    '%s %s',
+                    HtmlElement::create('span', ['class' => 'text', 'title' => $title], $title),
+                    HtmlElement::create('span', ['class' => 'header-id', 'title' => $name], '(' . $name . ')')
+                );
             } else {
-                $title = $name;
+                $title = FormattedString::create(
+                    '%s',
+                    HtmlElement::create('span', ['class' => 'text', 'title' => $name], $name)
+                );
             }
 
             $bp = $storage->loadProcess($name);
