@@ -259,6 +259,15 @@ class NodeTile extends BaseHtmlElement
                 ));
             }
         }
+
+        if ($node->isAcknowledged()) {
+            $this->actions()->add(Html::tag('i', ['class' => 'icon icon-ok handled-icon']));
+            return;
+        }
+
+        if ($node->isInDowntime()) {
+            $this->actions()->add(Html::tag('i', ['class' => 'icon icon-plug handled-icon']));
+        }
     }
 
     protected function addActionLinks()
