@@ -177,15 +177,6 @@ class ProcessForm extends QuickForm
         }
     }
 
-    protected function getNode(BpConfig $bp, $nodeName)
-    {
-        if ($nodeName) {
-            return $bp->getNode($nodeName);
-        } else {
-            return null;
-        }
-    }
-
     public function onSuccess()
     {
         $changes = ProcessChanges::construct($this->bp, $this->session);
