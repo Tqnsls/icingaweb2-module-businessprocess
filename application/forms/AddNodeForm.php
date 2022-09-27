@@ -87,6 +87,18 @@ class AddNodeForm extends QuickForm
                 'This is the unique identifier of this process'
             ),
             'validators'    => [
+                [
+                    'validator' => 'Regex',
+                    'options'   => [
+                        'pattern' => '/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*)?[a-zA-Z0-9_]$/',
+                        'messages'  => [
+                            'regexNotMatch' => $this->translate(
+                                'Id must only consist of alphanumeric characters.
+                                Space, dot, dash and underscore are allowed but not at the beginning or end'
+                            )
+                        ]
+                    ],
+                ],
                 ['Callback', true, [
                     'callback'  => function ($value) {
                         if ($this->hasParentNode()) {
