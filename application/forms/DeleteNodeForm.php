@@ -137,9 +137,23 @@ class DeleteNodeForm extends QuickForm
         $confirm = $this->getValue('confirm');
         switch ($confirm) {
             case 'yes':
+                if ($this->parentNode !== null) {
+                    $parentStateOverrides = $this->parentNode->getStateOverrides();
+
+                    unset($parentStateOverrides[$this->node->getName()]);
+                    $changes->modifyNode($this->parentNode, ['stateOverrides' => $parentStateOverrides]);
+                }
+
                 $changes->deleteNode($this->node, $this->parentNode === null ? null : $this->parentNode->getName());
                 break;
             case 'all':
+                foreach ($this->node->getParents() as $parent) {
+                    $parentStateOverrides = $parent->getStateOverrides();
+
+                    unset($parentStateOverrides[$this->node->getName()]);
+                    $changes->modifyNode($parent, ['stateOverrides' => $parentStateOverrides]);
+                }
+
                 $changes->deleteNode($this->node);
                 break;
             case 'no':
