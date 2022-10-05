@@ -220,7 +220,18 @@ class AddNodeForm extends QuickForm
             'description'  => $this->translate(
                 'Hosts that should be part of this business process node'
             ),
-            'validators'    => [[new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true]]
+            'validators'    => [
+                [new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true],
+                ['Callback', true, [
+                    'callback' => function ($value) {
+                        $values = explode(';Hoststatus', $value);
+                        return (bool) preg_match('/^(?:(?!;).)*$/', $values[0]); // object name contains semicolon
+                    },
+                    'messages' => [
+                        'callbackValue' => $this->translate('Hosts containing semicolon in name are not allowed')
+                    ]
+                ]]
+            ]
         ]);
 
         $this->addHostOverrideCheckbox();
@@ -252,6 +263,19 @@ class AddNodeForm extends QuickForm
             'ignore'       => true,
             'class'        => 'autosubmit',
             'multiOptions' => $this->optionalEnum($this->enumHostForServiceList()),
+            'validators'    => [
+                [
+                    'validator' => 'Regex',
+                    'options'   => [
+                        'pattern' => '/^(?:(?!;).)*$/',
+                        'messages' => [
+                            'regexNotMatch' => $this->translate(
+                                'Host containing semicolon in name is not allowed'
+                            )
+                        ]
+                    ]
+                ]
+            ]
         ));
     }
 
@@ -266,7 +290,19 @@ class AddNodeForm extends QuickForm
             'description'  => $this->translate(
                 'Services that should be part of this business process node'
             ),
-            'validators'    => [[new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true]]
+            'validators'    => [
+                [new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true],
+                ['Callback', true, [
+                    'callback'  => function ($value) {
+                        return count(explode(';', $value)) === 2;
+                    },
+                    'messages'  => [
+                        'callbackValue' => $this->translate(
+                            'Services containing semicolon in name are not allowed'
+                        )
+                    ]
+                ]]
+            ]
         ]);
     }
 
@@ -285,7 +321,18 @@ class AddNodeForm extends QuickForm
             'description'  => $this->translate(
                 'Hosts that should be part of this business process node'
             ),
-            'validators'    => [[new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true]]
+            'validators'    => [
+                [new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true],
+                ['Callback', true, [
+                    'callback' => function ($value) {
+                        $values = explode(';Hoststatus', $value);
+                        return (bool) preg_match('/^(?:(?!;).)*$/', $values[0]);
+                    },
+                    'messages' => [
+                        'callbackValue' => $this->translate('Hosts containing semicolon in name are not allowed')
+                    ]
+                ]]
+            ]
         ]);
     }
 
@@ -304,7 +351,19 @@ class AddNodeForm extends QuickForm
             'description'  => $this->translate(
                 'Services that should be part of this business process node'
             ),
-            'validators'    => [[new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true]]
+            'validators'    => [
+                [new NoDuplicateChildrenValidator($this, $this->bp, $this->parent), true],
+                ['Callback', true, [
+                    'callback'  => function ($value) {
+                        return count(explode(';', $value)) === 2;
+                    },
+                    'messages'  => [
+                        'callbackValue' => $this->translate(
+                            'Services containing semicolon in name are not allowed'
+                        )
+                    ]
+                ]]
+            ]
         ]);
     }
 
