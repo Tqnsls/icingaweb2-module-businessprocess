@@ -25,9 +25,15 @@ class BpConfigForm extends BpConfigBaseForm
                 ),
                 array(
                     'validator' => 'Regex',
-                    'options' => array(
-                        'pattern' => '/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*)?[a-zA-Z0-9_]$/'
-                    )
+                    'options' => [
+                        'pattern' => '/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*)?[a-zA-Z0-9_]$/',
+                        'messages'  => [
+                            'regexNotMatch' => $this->translate(
+                                'Id must only consist of alphanumeric characters.
+                                Space, dot, dash and underscore are allowed but not at the beginning or end'
+                            )
+                        ]
+                    ]
                 )
             ),
             'description' => $this->translate(
