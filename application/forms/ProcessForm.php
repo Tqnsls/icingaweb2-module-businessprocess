@@ -35,9 +35,21 @@ class ProcessForm extends QuickForm
             $this->addElement('text', 'name', array(
                 'label'        => $this->translate('ID'),
                 'required'     => true,
-                'description' => $this->translate(
-                    'This is the unique identifier of this process'
-                ),
+                'description' => $this->translate('This is the unique identifier of this process'),
+                'validators'    => [
+                    [
+                        'validator' => 'Regex',
+                        'options'   => [
+                            'pattern' => '/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*)?[a-zA-Z0-9_]$/',
+                            'messages'  => [
+                                'regexNotMatch' => $this->translate(
+                                    'Id must only consist of alphanumeric characters.
+                                Space, dot, dash and underscore are allowed but not at the beginning or end'
+                                )
+                            ]
+                        ],
+                    ]
+                ]
             ));
         } else {
             $this->addHtml(
